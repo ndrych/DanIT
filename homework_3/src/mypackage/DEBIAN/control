@@ -1,0 +1,6 @@
+Package: mypackage
+Version: 1.0
+Architecture: all
+Maintainer: Drych Natalia natalochka.zvlp@gmail.com
+Description: running echo
+

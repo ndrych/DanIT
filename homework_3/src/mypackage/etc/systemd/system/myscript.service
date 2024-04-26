@@ -1,0 +1,13 @@
+[Unit]
+Description=My Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/vagrant/DanIT/homework_3/src/mypackage/usr/bin/myscript.sh
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+
