@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  service1:
+    image: nginx
+    volumes:
+      - shared_volume:/shared_data
+    command: sh -c "echo 'Hello from Service 1' > /shared_data/shared_file.txt"
+
+  service2:
+    image: src_web
+    volumes:
+      - shared_volume:/shared_data 
+    command: sh -c "cat /shared_data/shared_file.txt"
+
+volumes:
+  shared_volume:
+

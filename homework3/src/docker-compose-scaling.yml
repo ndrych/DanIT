@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  service_name:
+    image: nginx
+    deploy:
+      replicas: 1
+
