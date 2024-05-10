@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Checkout stage"
+                git branch: "main",
+                    credentialsId: "ssh-key",
+                    url: "git@gitlab.com:drych/Drych_new.git"
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo "Building..."
+                script {
+                    // Create folder and file with current data and time named pipeline/${BUILD_NUMBER}.txt
+                    def buildDir = "pipeline/${BUILD_NUMBER}"
+                    def filePath = "${buildDir}/build.txt"
+                    writeFile file: filePath, text: "Build number ${BUILD_NUMBER} completed at ${env.BUILD_ID}"
+                }
+            }
+        }
+        
+        stage('Publish') {
+            steps {
+                echo "Publishing..."
+                script {
+                    // Add, commit, and push changes to git
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        sh "git checkout main"
+                        sh "GIT_SSH_COMMAND='ssh -i ${SSH_KEY}' git pull origin main"
+                        sh "git add pipeline/*"
+                        sh "git commit -m 'Add build ${env.BUILD_NUMBER}'"
+                        sh "git tag v0.2.${env.BUILD_NUMBER}"
+                        sh "GIT_SSH_COMMAND='ssh -i ${SSH_KEY}' git push origin main --tags"
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            archiveArtifacts artifacts: '*.txt', fingerprint: true
+        }
+    }
+}

@@ -1,0 +1,98 @@
+Started by user Natalia Drych
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on slave_1 in /var/jenkins_home/workspace/Pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] echo
+Checkout stage
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential ssh-key
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Pipeline/.git # timeout=10
+ > git config remote.origin.url git@gitlab.com:drych/Drych_new.git # timeout=10
+Fetching upstream changes from git@gitlab.com:drych/Drych_new.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+using GIT_SSH to set credentials 
+Verifying host key using known hosts file, will automatically accept unseen keys
+ > git fetch --tags --force --progress -- git@gitlab.com:drych/Drych_new.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 0d67b86ed0f1575e6a2366b488525dc48f6fa73f (refs/remotes/origin/main)
+Commit message: "Add build 46"
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 0d67b86ed0f1575e6a2366b488525dc48f6fa73f # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 0d67b86ed0f1575e6a2366b488525dc48f6fa73f # timeout=10
+ > git rev-list --no-walk 0f70d7a1d5e06f0b3af9bc6e97d23ed2d6da31cf # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] echo
+Building...
+[Pipeline] script
+[Pipeline] {
+[Pipeline] writeFile
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Publish)
+[Pipeline] echo
+Publishing...
+[Pipeline] script
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $SSH_KEY
+[Pipeline] {
+[Pipeline] sh
++ git checkout main
+Already on 'main'
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [SSH_KEY]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ GIT_SSH_COMMAND=ssh -i **** git pull origin main
+From gitlab.com:drych/Drych_new
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Pipeline] sh
++ git add pipeline/38 pipeline/40 pipeline/41 pipeline/43 pipeline/45 pipeline/46 pipeline/47
+[Pipeline] sh
++ git commit -m Add build 47
+[main 15affa0] Add build 47
+ 1 file changed, 1 insertion(+)
+ create mode 100644 pipeline/47/build.txt
+[Pipeline] sh
++ git tag v0.2.47
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [SSH_KEY]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ GIT_SSH_COMMAND=ssh -i **** git push origin main --tags
+To gitlab.com:drych/Drych_new.git
+   0d67b86..15affa0  main -> main
+ * [new tag]         v0.2.47 -> v0.2.47
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+Archiving artifacts
+Recording fingerprints
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
