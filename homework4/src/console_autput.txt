@@ -1,0 +1,50 @@
+Started by user Natalia Drych
+Running as SYSTEM
+Building remotely on slave_1 (slave) in workspace /var/jenkins_home/workspace/Homework4
+[WS-CLEANUP] Deleting project workspace...
+[WS-CLEANUP] Deferred wipeout is used...
+[WS-CLEANUP] Done
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential Gitlab credentials
+Cloning the remote Git repository
+Cloning repository https://gitlab.com/drych/Drych_new.git
+ > git init /var/jenkins_home/workspace/Homework4 # timeout=10
+Fetching upstream changes from https://gitlab.com/drych/Drych_new.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://gitlab.com/drych/Drych_new.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://gitlab.com/drych/Drych_new.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Seen branch in repository origin/main
+Seen 1 remote branch
+ > git show-ref --tags -d # timeout=10
+Checking out Revision 98d3eb52b6b97635cf59a37f80c44d3952c03a28 (origin/main, refs/tags/v0.2.49)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 98d3eb52b6b97635cf59a37f80c44d3952c03a28 # timeout=10
+Commit message: "Add build 49"
+ > git rev-list --no-walk 98d3eb52b6b97635cf59a37f80c44d3952c03a28 # timeout=10
+ > git rev-list --no-walk 98d3eb52b6b97635cf59a37f80c44d3952c03a28 # timeout=10
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.2'
+[Homework4] $ /bin/sh -xe /tmp/jenkins8418809855804748995.sh
++ mkdir -p freestyle
++ echo Folder is created
+Folder is created
++ date
++ git config --global user.email
+natalochka.zvlp@gmail.com
++ git config --global user.name natalochka.zvlp@gmail.com
++ git add .
++ git commit -m Added file for build 57
+[detached HEAD 624444c] Added file for build 57
+ 1 file changed, 1 insertion(+)
+ create mode 100644 freestyle/57.txt
++ git tag v0.1.57
++ git push origin v0.1.57
+To https://gitlab.com/drych/Drych_new.git
+ * [new tag]         v0.1.57 -> v0.1.57
+Archiving artifacts
+Finished: SUCCESS

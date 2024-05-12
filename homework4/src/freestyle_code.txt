@@ -1,0 +1,10 @@
+git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/drych/Drych_new.git
+mkdir -p freestyle
+echo "Folder is created"
+date > freestyle/${BUILD_NUMBER}.txt
+git config --global user.email ${EMAIL}
+git config --global user.name ${GIT_USERNAME}
+git add .
+git commit -m "Added file for build ${BUILD_NUMBER}"
+git tag v0.1.${BUILD_NUMBER}
+git push origin v0.1.${BUILD_NUMBER}
