@@ -1,4 +1,7 @@
-
+.terraform
+.terraform.*
+*.tfstate
+*.tfstate.*
 homework_terraform1/src/.terraform/
 .terraform.lock.hcl
 
