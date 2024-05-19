@@ -1,0 +1,80 @@
+Vagrant.configure("2") do |config|
+  # Common configuration for all VMs
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.network "public_network"
+  config.vm.synced_folder "./data", "/vagrant_data"
+
+  # Configuration for vm1
+  config.vm.define "vm1" do |vm1|
+    vm1.vm.provision "shell", inline: <<-SHELL
+      # Update package lists
+      sudo apt-get update
+      sudo apt upgrade -y
+
+      # Install MySQL server and vim editor
+      sudo apt install mysql-server -y 
+
+      # Start the MySQL service and enable it
+      sudo systemctl start mysql
+      sudo systemctl enable mysql
+
+      # Create a Users database and a  new MySQL user with privileges
+      sudo mysql -e "CREATE DATABASE Users;"
+      sudo mysql -e "CREATE USER 'exporter'@'%' IDENTIFIED BY 'admin' WITH MAX_USER_CONNECTIONS 3; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';"
+
+      # Install mysqld_exporter
+      sudo apt update
+      wget https://github.com/prometheus/mysqld_exporter/releases/download/v0.14.0/mysqld_exporter-0.14.0.linux-amd64.tar.gz
+      tar xvfz mysqld_exporter-0.14.0.linux-amd64.tar.gz
+      sudo mv mysqld_exporter-0.14.0.linux-amd64/mysqld_exporter /usr/local/bin/
+      rm -rf mysqld_exporter-0.14.0.linux-amd64*
+
+      # Install node_exporter
+      sudo apt update
+      wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+      tar xvfz node_exporter-1.5.0.linux-amd64.tar.gz
+      sudo mv node_exporter-1.5.0.linux-amd64/node_exporter /usr/local/bin/
+      rm -rf node_exporter-1.5.0.linux-amd64*
+    SHELL
+  end
+
+  # Configuration for vm2
+  config.vm.define "vm2" do |vm2|
+    vm2.vm.provision "shell", inline: <<-SHELL
+      # Update package lists
+      sudo apt-get update
+
+      # Install Prometheus
+      sudo apt apdate
+      wget https://github.com/prometheus/prometheus/releases/download/v2.37.6/prometheus-2.37.6.linux-amd64.tar.gz
+      tar xvfz prometheus-2.37.6.linux-amd64.tar.gz
+      sudo mkdir /etc/prometheus /var/lib/prometheus
+      sudo mv prometheus-2.37.6.linux-amd64/prometheus prometheus-2.37.6.linux-amd64/promtool /usr/local/bin/
+      sudo mv prometheus-2.37.6.linux-amd64/prometheus.yml /etc/prometheus/prometheus.yml
+      sudo mv prometheus-2.37.6.linux-amd64/consoles /etc/prometheus/
+      sudo mv prometheus-2.37.6.linux-amd64/console_libraries /etc/prometheus/
+      rm -rf prometheus-2.37.6.linux-amd64*
+
+      # Install Grafana
+      
+      sudo apt update
+      sudo apt-get install -y apt-transport-https software-properties-common
+      wget -q -O /usr/share/keyrings/grafana.key https://apt.grafana.com/gpg.key
+      echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+      sudo apt-get update
+      sudo apt-get install -y grafana
+      sudo systemctl daemon-reload
+      sudo systemctl enable grafana-server
+      sudo systemctl start grafana-server
+
+      # Install Alertmanager
+      sudo apt update
+      wget https://github.com/prometheus/alertmanager/releases/download/v0.26.0/alertmanager-0.26.0.linux-amd64.tar.gz
+      tar xvzf alertmanager-0.26.0.linux-amd64.tar.gz
+      sudo mv alertmanager-0.26.0.linux-amd64/alertmanager /usr/local/bin/
+      sudo mkdir /etc/alertmanager
+      sudo mv alertmanager-0.26.0.linux-amd64/amtool /usr/local/bin/
+      rm -rf alertmanager-0.26.0.linux-amd64*
+    SHELL
+  end
+end
