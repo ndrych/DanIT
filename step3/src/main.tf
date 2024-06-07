@@ -39,21 +39,21 @@ module "load_balancer" {
   vpc_id                  = module.vpc.vpc_id
   subnet_ids              = module.vpc.public_subnets
   security_group_id       = module.security_group.security_group_id
-  instance_ids            = [module.ec2.instance_ids[0]]
+  instances            = [module.ec2.instances[0]]
 }
 
 resource "local_file" "inventory" {
-  content                 = templatefile("${path.module}/inventory.tpl", {
-    instances             = module.ec2.public_ips,
-    instance_ids          = module.ec2.instance_ids,
-    prometheus_port       = var.prometheus_port,
-    grafana_port          = var.grafana_port,
-    node_exporter_port    = var.node_exporter_port,
-    cadvisor_port         = var.cadvisor_port,
-    name                  = var.name,
-    open_ports            = var.open_ports
+  content = templatefile("${path.module}/inventory.tpl", {
+    instances = module.ec2.public_ips,
+    instance_ids = module.ec2.instances,
+    prometheus_port = var.prometheus_port,
+    grafana_port = var.grafana_port,
+    node_exporter_port = var.node_exporter_port,
+    cadvisor_port = var.cadvisor_port,
+    open_ports = var.open_ports,
+    name = var.name
   })
-  filename                = "${path.module}/../ansible/inventory.ini"
+  filename = "${path.module}/../ansible/inventory.ini"
 }
 
 resource "null_resource" "wait_for_instances" {
@@ -69,7 +69,7 @@ EOT
   }
 
   triggers = {
-    instance_ids = join(",", module.ec2.instance_ids)
+    instance_ids = join(",", module.ec2.instances)
   }
 }
 
@@ -96,7 +96,7 @@ resource "null_resource" "run_ansible" {
   ]
 
   triggers = {
-    instance_ids       = join(",", module.ec2.instance_ids)
+    instance_ids       = join(",", module.ec2.instances)
     prometheus_port    = var.prometheus_port
     grafana_port       = var.grafana_port
     node_exporter_port = var.node_exporter_port

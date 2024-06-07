@@ -18,9 +18,9 @@ output "private_subnets" {
   value       = module.vpc.private_subnets
 }
 
-output "instance_ids" {
+output "instances" {
   description = "The IDs of the instances"
-  value       = module.ec2.instance_ids
+  value       = module.ec2.instances
 }
 
 output "instance_public_ips" {

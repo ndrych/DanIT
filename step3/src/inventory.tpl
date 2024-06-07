@@ -1,10 +1,15 @@
 [all]
-{% for ip in public_ips %}
-{{ ip }} ansible_host={{ ip }} ansible_user={{ ansible_user }} ansible_port={{ ansible_port }} ansible_ssh_private_key_file={{ private_key }}
-{% endfor %}
+%{ for instance in instances ~}
+${instance} ansible_host=${instance} ansible_port=22
+%{ endfor ~}
 
 [all:vars]
-prometheus_port={{ prometheus_port }}
-grafana_port={{ grafana_port }}
-node_exporter_port={{ node_exporter_port }}
-cadvisor_port={{ cadvisor_port }}
+ansible_user=ec2-user
+ansible_ssh_private_key_file=~/.ssh/drych2-key.pem
+prometheus_port=${prometheus_port}
+grafana_port=${grafana_port}
+node_exporter_port=${node_exporter_port}
+cadvisor_port=${cadvisor_port}
+name=${name}
+instances=${jsonencode(instances)}
+open_ports=${jsonencode(open_ports)}

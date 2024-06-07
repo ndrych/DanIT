@@ -1,4 +1,4 @@
-output "instance_ids" {
+output "instances" {
   value = [for instance in aws_instance.this : instance.id]
 }
 
