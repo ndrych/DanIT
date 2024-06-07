@@ -1,13 +1,13 @@
 resource "aws_elb" "this" {
-  name               = "${var.name}-lb"
-  security_groups    = [var.security_group_id]
-  subnets            = var.subnet_ids
+  name                 = "${var.name}-lb"
+  security_groups      = [var.security_group_id]
+  subnets              = var.subnet_ids
 
   listener {
-    instance_port     = 80
-    instance_protocol = "HTTP"
-    lb_port           = 80
-    lb_protocol       = "HTTP"
+    instance_port       = 80
+    instance_protocol   = "HTTP"
+    lb_port             = 80
+    lb_protocol         = "HTTP"
   }
 
   health_check {
@@ -21,9 +21,9 @@ resource "aws_elb" "this" {
   instances = var.instance_ids
 
   tags = {
-    Name       = "${var.name}-lb"
-    Owner      = var.name
-    CreatedBy  = var.name
-    Purpose    = "step3"
+    Name                = "${var.name}-lb"
+    Owner               = "${var.name}-owner"
+    CreatedBy           = var.name
+    Purpose             = "step3"
   }
 }
