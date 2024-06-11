@@ -1,7 +1,9 @@
 output "instances" {
-  value = [for instance in aws_instance.this : instance.id]
+  description = "List of instance IDs"
+  value       = aws_instance.this[*].id
 }
 
 output "public_ips" {
-  value = [for instance in aws_instance.this : instance.public_ip]
+  description = "List of public IP addresses"
+  value       = aws_instance.this[*].public_ip
 }

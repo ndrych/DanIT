@@ -39,7 +39,7 @@ module "load_balancer" {
   vpc_id                  = module.vpc.vpc_id
   subnet_ids              = module.vpc.public_subnets
   security_group_id       = module.security_group.security_group_id
-  instances            = [module.ec2.instances[0]]
+  instances               = [module.ec2.instances[0]]
 }
 
 resource "local_file" "inventory" {

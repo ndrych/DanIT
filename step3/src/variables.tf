@@ -13,6 +13,7 @@ variable "aws_region" {
 variable "instance_count" {
   type        = number
   description = "Number of EC2 instances to create"
+  default     = 3
 }
 
 variable "vpc_cidr" {
@@ -96,6 +97,6 @@ variable "private_key" {
 variable "open_ports" {
   description = "List of ports to be opened"
   type        = list(number)
-  default     = [443, 22, 80]
+  default     = [443, 22, 80, 9090, 3000, 9100, 8080]
 }
 
