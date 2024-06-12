@@ -42,8 +42,6 @@ module "load_balancer" {
 }
 
 resource "local_file" "inventory" {
-  depends_on = [null_resource.cleanup_inventory]
-
   content = templatefile("${path.module}/inventory.tpl", {
     public_ips       = module.ec2.public_ips,
     ansible_user     = var.ansible_user,
