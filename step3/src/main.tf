@@ -9,7 +9,6 @@ module "vpc" {
   name                   = var.name
   cidr                   = var.vpc_cidr
   azs                    = var.vpc_azs
-  private_subnets        = var.vpc_private_subnets
   public_subnets         = var.vpc_public_subnets
   enable_nat_gateway     = var.enable_nat_gateway
   single_nat_gateway     = var.single_nat_gateway
@@ -43,65 +42,47 @@ module "load_balancer" {
 }
 
 resource "local_file" "inventory" {
+  depends_on = [null_resource.cleanup_inventory]
+
   content = templatefile("${path.module}/inventory.tpl", {
-    instances = module.ec2.public_ips,
-    instance_ids = module.ec2.instances,
-    prometheus_port = var.prometheus_port,
-    grafana_port = var.grafana_port,
+    public_ips       = module.ec2.public_ips,
+    ansible_user     = var.ansible_user,
+    ansible_port     = var.ansible_port,
+    private_key      = var.private_key,
+    prometheus_port  = var.prometheus_port,
+    grafana_port     = var.grafana_port,
     node_exporter_port = var.node_exporter_port,
-    cadvisor_port = var.cadvisor_port,
-    open_ports = var.open_ports,
-    name = var.name
+    cadvisor_port    = var.cadvisor_port
   })
   filename = "${path.module}/../ansible/inventory.ini"
 }
 
-resource "null_resource" "wait_for_instances" {
+resource "null_resource" "wait_for_ssh" {
+  count = length(module.ec2.public_ips)
+
   provisioner "local-exec" {
     command = <<EOT
-for ip in ${join(" ", module.ec2.public_ips)}; do
-  for i in {1..10}; do
-    nc -zv $ip 22 && break
-    sleep 5
-  done
-done
-EOT
-  }
-
-  triggers = {
-    instance_ids = join(",", module.ec2.instances)
+    for i in {1..30}; do
+      nc -zv ${element(module.ec2.public_ips, count.index)} 22 && break
+      echo "Waiting for SSH to be available on ${element(module.ec2.public_ips, count.index)}..."
+      sleep 5
+    done
+    EOT
   }
 }
 
-resource "null_resource" "generate_ansible_hash" {
-  provisioner "local-exec" {
-    command = <<EOT
-find ../ansible -type f -exec sha256sum {} \; | sort -k 2 | sha256sum > ../ansible/ansible_hash.txt
-EOT
-  }
-
-  triggers = {
-    always_run = timestamp()
-  }
-}
-
-resource "null_resource" "run_ansible" {
-  provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG=${path.module}/../ansible/ansible.cfg ansible-playbook ${path.module}/../ansible/playbooks/deploy.yml"
-  }
-
+resource "null_resource" "ansible_playbook" {
   depends_on = [
-    null_resource.wait_for_instances,
-    null_resource.generate_ansible_hash
+    module.ec2,
+    null_resource.wait_for_ssh
   ]
 
-  triggers = {
-    instance_ids       = join(",", module.ec2.instances)
-    prometheus_port    = var.prometheus_port
-    grafana_port       = var.grafana_port
-    node_exporter_port = var.node_exporter_port
-    cadvisor_port      = var.cadvisor_port
-    open_ports         = join(",", var.open_ports)
-    ansible_hash       = timestamp()
+  provisioner "local-exec" {
+    command = <<EOT
+    ANSIBLE_CONFIG=${path.module}/../ansible/ansible.cfg \
+        ansible-playbook -i ${path.module}/../ansible/inventory.ini \
+	    ${path.module}/../ansible/playbooks/deploy.yml
+    EOT
   }
 }
+

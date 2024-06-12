@@ -13,7 +13,8 @@ resource "aws_lb_target_group" "main" {
     timeout             = 10
     healthy_threshold   = 3
     unhealthy_threshold = 3
-   }
+    matcher             = "302"
+}
 
   tags = {
     Name      = "${var.name}-main"

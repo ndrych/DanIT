@@ -1,27 +1,15 @@
 ---
-- name: Download and install cAdvisor
-  shell: |
-    cd /opt
-    wget https://github.com/google/cadvisor/releases/download/v0.38.7/cadvisor -O cadvisor
-    chmod +x cadvisor
+- import_role:
+    name: common
 
-- name: Create cAdvisor service
-  copy:
-    dest: /etc/systemd/system/cadvisor.service
-    content: |
-      [Unit]
-      Description=cAdvisor
-      Wants=network-online.target
-      After=network-online.target
-
-      [Service]
-      ExecStart=/opt/cadvisor -port {{ cadvisor_port }}
-
-      [Install]
-      WantedBy=default.target
-
-- name: Start and enable cAdvisor service
-  systemd:
+- name: Run cAdvisor container
+  docker_container:
     name: cadvisor
-    enabled: yes
-    state: started
+    image: google/cadvisor:latest
+    ports:
+      - "{{ cadvisor_port }}:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
