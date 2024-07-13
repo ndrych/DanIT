@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: drych-server-deployment
+   namespace: drych-namespace
+   labels:
+     app: drych-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: drych-server
+  template:
+    metadata:
+      labels:
+        app: drych-server
+    spec:
+      containers:
+      - name: flask-web-server
+        image: drych/flask-web-server:latest
+        ports:
+        - containerPort: 5000
+

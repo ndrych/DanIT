@@ -2,3 +2,4 @@ nohup: ignoring input
 Forwarding from 127.0.0.1:8085 -> 80
 Forwarding from [::1]:8085 -> 80
 Handling connection for 8085
+error: lost connection to pod
