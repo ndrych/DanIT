@@ -1,0 +1,15 @@
+project: default
+source:
+  repoURL: 'git@gitlab.com:drych/drych-final.git'
+  path: test
+  targetRevision: main
+destination:
+  server: 'https://kubernetes.default.svc'
+  namespace: default
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - PruneLast=true
+

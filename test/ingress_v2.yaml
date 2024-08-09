@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xac-nginx-app-ingress
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Remove SSL redirection
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "app.drych.site"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 443  # Use port 443 for SSL
